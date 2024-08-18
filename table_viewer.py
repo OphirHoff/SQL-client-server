@@ -23,4 +23,4 @@ def data_to_html(data, columns, table_name, output_file='output.html'):
         file.write(html_content)
 
     chrome_exe = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
-    subprocess.run([chrome_exe, fr'D:\Cyber\summer_task\task3\{output_file}'])
+    subprocess.run([chrome_exe, fr'D:\Cyber\summer_task\SQL-client-server\{output_file}'])

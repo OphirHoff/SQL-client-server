@@ -64,6 +64,10 @@ def do_action(data, db):
         else:
             to_send = protocol.create_server_response("insert customer", "failed")
 
+    elif action == protocol.GET_ORDERS_REQUEST:
+        data = db.get_all_orders()
+        to_send = protocol.create_server_response("get orders", data)
+
     elif action == protocol.GET_ORDER_REQUEST:
         
         if len(fields) == 2:  # get order by name
@@ -72,6 +76,14 @@ def do_action(data, db):
         else:  # get order by order ID
             data = db.get_order_by_id(fields[0])
             to_send = protocol.create_server_response("get order", data)
+
+    elif action == protocol.GET_MENU_REQUEST:
+        data = db.get_menu()
+        to_send = protocol.create_server_response("get menu", data)
+
+    elif action == protocol.GET_EXP_ORDERS_REQUEST:
+        data = db.get_pricey_orders()
+        to_send = protocol.create_server_response("pricey orders", data)
 
     # if action == "UPDUSR":
     #     usr = SQL_ORM.User(fields[0], fields[1], fields[2], fields[3], fields[4],
@@ -90,9 +102,9 @@ def do_action(data, db):
     # elif action == "RULIVE":
     #     to_send = "RULIVER|" + "yes i am a live server"
 
-    # else:
-    #     print(f"Got unknown action from client {action}")
-    #     to_send = "ERR___R|001|" + "unknown action"
+    else:
+        print(f"Got unknown action from client {action}")
+        to_send = "ERR___R|001|" + "unknown action"
 
     return to_send
 

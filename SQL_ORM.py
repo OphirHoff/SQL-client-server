@@ -90,6 +90,19 @@ class OrdersCustomersORM():
 
     # All read SQL
 
+    def get_all_orders(self):
+
+        self.open_DB()
+
+        sql_query = f"SELECT * FROM {orders}"
+        self.current.execute(sql_query)
+        res = self.current.fetchall()
+        columns = [description[0] for description in self.current.description]
+        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+
+        self.close_DB()
+        return data
+
     def get_order_by_name(self, firstname, surname):
 
         self.open_DB()
@@ -103,10 +116,12 @@ class OrdersCustomersORM():
 
         for id in id_lst:
             
-            order_query = f"SELECT * FROM {orders} WHERE id = {id}"
+            order_query = f"SELECT * FROM {orders} WHERE customer_id = {id};"
             self.current.execute(order_query)
-            row = self.current.fetchone()
-            rows.append(row)
+            res = self.current.fetchall()
+            if res != None:
+                for row in res:
+                    rows.append(row)
         
         columns = [description[0] for description in self.current.description]
 
@@ -114,6 +129,46 @@ class OrdersCustomersORM():
 
         t = (pickle.dumps(rows), pickle.dumps(columns))
         data = pickle.dumps(t)
+        self.close_DB()
+        return data
+    
+    def get_order_by_id(self, order_id):
+        
+        self.open_DB()
+
+        sql_query = f"SELECT * FROM {orders} WHERE id = {order_id};"
+        self.current.execute(sql_query)
+        res = self.current.fetchall()
+        columns = [description[0] for description in self.current.description]
+
+        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        self.close_DB()
+        return data
+    
+    def get_menu(self):
+
+        self.open_DB()
+
+        sql_query = f"SELECT * FROM {menu}"
+        self.current.execute(sql_query)
+        res = self.current.fetchall()
+        columns = [description[0] for description in self.current.description]
+        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+
+        self.close_DB()
+        return data
+    
+    def get_pricey_orders(self):
+        """get 5 Orders with heighest total cost."""
+
+        self.open_DB()
+
+        sql_query = f"SELECT * FROM orders ORDER BY total DESC LIMIT 5;"
+        self.current.execute(sql_query)
+        res = self.current.fetchall()
+        columns = [description[0] for description in self.current.description]
+        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+
         self.close_DB()
         return data
 

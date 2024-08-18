@@ -9,26 +9,40 @@ import table_viewer
 
 orders = 'orders'
 customers = 'customers'
-menu = 'menu'
 
 def handle_response(response):
 
     code = response[:7]
+
+    if type(code) != str:
+        code = code.decode()
+
     data = response[8:]
-    fields = data.split('~')
+    try:
+        fields = data.split('~')
+    except:
+        fields = data.split(b'~')
 
-    print(fields)
-
-    if code == protocol.GET_ORDER_RESPONSE:
-        print(type(fields[0]))
+    if code == protocol.GET_ORDER_RESPONSE or code == protocol.GET_ORDERS_RESPONSE:
         data = pickle.loads(fields[0])
-        table_viewer.data_to_html(pickle.loads(data[0]), pickle.loads([data[1]]), orders)
+        table_viewer.data_to_html(pickle.loads(data[0]), pickle.loads(data[1]), orders)
+
+    elif code == protocol.GET_MENU_RESPONSE:
+        data = pickle.loads(fields[0])
+        table_viewer.data_to_html(pickle.loads(data[0]), pickle.loads(data[1]), 'menu')
+
+    elif code == protocol.GET_EXP_ORDERS_RESPONSE:
+        data = pickle.loads(fields[0])
+        table_viewer.data_to_html(pickle.loads(data[0]), pickle.loads(data[1]), 'Highets total-cost orders')
 
 def menu():
     print(f"1. Create Order\n" +
           f"2. Insert Customer\n" +
           f"3. Get Order(s) by name\n" +
           f"4. Get Order(s) by order ID\n"
+          f"5. Get all orders\n"
+          f"6. Get menu\n"
+          f"7. Get top 5 orders by total price\n"
           f"9. exit\n\n>")
 
     data = input("Enter Num > ")
@@ -58,6 +72,15 @@ def menu():
         order_id = input("Enter order ID > ")
         return protocol.create_client_request("get order", order_id)
     
+    elif data == "5":
+        return protocol.create_client_request("get orders")
+    
+    elif data == "6":
+        return protocol.create_client_request("get menu")
+    
+    elif data == "7":
+        return protocol.create_client_request("pricey orders")
+    
     else:
         return "RULIVE"
 
@@ -76,4 +99,4 @@ while True:
         print("seems server DC")
         break
     print(f"Got>> {data}")
-    handle_response(data.decode())
+    handle_response(data)
