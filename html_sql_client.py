@@ -1,18 +1,37 @@
 __author__ = 'OphirH'
 
-
 import socket
 import threading
 from tcp_by_size import send_with_size, recv_by_size
 import protocol
+import pickle
+import table_viewer
+
+orders = 'orders'
+customers = 'customers'
+menu = 'menu'
+
+def handle_response(response):
+
+    code = response[:7]
+    data = response[8:]
+    fields = data.split('~')
+
+    print(fields)
+
+    if code == protocol.GET_ORDER_RESPONSE:
+        print(type(fields[0]))
+        data = pickle.loads(fields[0])
+        table_viewer.data_to_html(pickle.loads(data[0]), pickle.loads([data[1]]), orders)
 
 def menu():
     print(f"1. Create Order\n" +
           f"2. Insert Customer\n" +
           f"3. Get Order(s) by name\n" +
+          f"4. Get Order(s) by order ID\n"
           f"9. exit\n\n>")
 
-    data = input("Enter Num> ")
+    data = input("Enter Num > ")
 
     if data == "9":
         return "q"
@@ -35,6 +54,10 @@ def menu():
         surname = input("Enter customer's surname > ")
         return protocol.create_client_request("get order", first_name, surname)
     
+    elif data == "4":
+        order_id = input("Enter order ID > ")
+        return protocol.create_client_request("get order", order_id)
+    
     else:
         return "RULIVE"
 
@@ -53,3 +76,4 @@ while True:
         print("seems server DC")
         break
     print(f"Got>> {data}")
+    handle_response(data.decode())

@@ -1,6 +1,5 @@
 __author__ = 'OphirH'
 
-
 import socket
 import SQL_ORM
 import protocol
@@ -67,8 +66,12 @@ def do_action(data, db):
 
     elif action == protocol.GET_ORDER_REQUEST:
         
-        data = db.get_order_by_name(fields[0], fields[1])
-        to_send = data
+        if len(fields) == 2:  # get order by name
+            data = db.get_order_by_name(fields[0], fields[1])
+            to_send = protocol.create_server_response("get order", data)
+        else:  # get order by order ID
+            data = db.get_order_by_id(fields[0])
+            to_send = protocol.create_server_response("get order", data)
 
     # if action == "UPDUSR":
     #     usr = SQL_ORM.User(fields[0], fields[1], fields[2], fields[3], fields[4],

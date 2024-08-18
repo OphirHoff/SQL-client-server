@@ -110,11 +110,12 @@ class OrdersCustomersORM():
         
         columns = [description[0] for description in self.current.description]
 
-        table_viewer.data_to_html(rows, columns, orders)
+        # table_viewer.data_to_html(rows, columns, orders)
 
+        t = (pickle.dumps(rows), pickle.dumps(columns))
+        data = pickle.dumps(t)
         self.close_DB()
-
-        # return res
+        return data
 
 
     def GetUser(self, username):
