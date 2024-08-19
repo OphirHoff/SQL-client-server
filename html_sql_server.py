@@ -81,9 +81,21 @@ def do_action(data, db):
         data = db.get_menu()
         to_send = protocol.create_server_response("get menu", data)
 
+    elif action == protocol.INSERT_TO_MENU_REQUEST:
+        data = db.add_to_menu(fields[0])
+        to_send = protocol.create_server_response("menu add", data)
+
     elif action == protocol.GET_EXP_ORDERS_REQUEST:
         data = db.get_pricey_orders()
         to_send = protocol.create_server_response("pricey orders", data)
+
+    elif action == protocol.GET_CUS_ID_REQUEST:
+        data = db.get_id_by_phone(fields[0])
+        to_send = protocol.create_server_response("get cus id", data)
+
+    elif action == protocol.EDIT_MENU_REQUEST:
+        data = db.edit_item_price(fields[0], fields[1])
+        to_send = protocol.create_server_response("edit menu", data)
 
     # if action == "UPDUSR":
     #     usr = SQL_ORM.User(fields[0], fields[1], fields[2], fields[3], fields[4],
