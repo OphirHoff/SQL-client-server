@@ -85,22 +85,6 @@ def do_action(data, db):
         data = db.get_pricey_orders()
         to_send = protocol.create_server_response("pricey orders", data)
 
-    # if action == "UPDUSR":
-    #     usr = SQL_ORM.User(fields[0], fields[1], fields[2], fields[3], fields[4],
-    #                        fields[5], fields[6], fields[7], False)
-    #     if db.update_user(usr):
-    #         to_send = "UPDUSRR|" + "Success"
-    #     else:
-    #         to_send = "UPDUSRR|" + "Error"
-
-    # elif action == "BBBBBB":
-    #     to_send = "BBBBBBR|" + "b"
-
-    # elif action == "CCCCCC":
-    #     to_send = "CCCCCCR|" + "c"
-
-    # elif action == "RULIVE":
-    #     to_send = "RULIVER|" + "yes i am a live server"
 
     else:
         print(f"Got unknown action from client {action}")

@@ -39,7 +39,7 @@ def menu():
     print(f"1. Create Order\n" +
           f"2. Insert Customer\n" +
           f"3. Get Order(s) by name\n" +
-          f"4. Get Order(s) by order ID\n"
+          f"4. Get Order by order ID\n"
           f"5. Get all orders\n"
           f"6. Get menu\n"
           f"7. Get top 5 orders by total price\n"
