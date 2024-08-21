@@ -12,6 +12,10 @@ orders = 'orders'
 customers = 'customers'
 menu = 'menu'
 
+def pickle_data(rows, columns):
+    
+    return pickle.dumps((pickle.dumps(rows), pickle.dumps(columns)))
+
 
 class Order():
     def __init__(self, items: list[str], id: int, payment_method: str) -> None:
@@ -67,7 +71,7 @@ class OrdersCustomersORM():
         self.current.execute(sql_query)
         res = self.current.fetchall()
         columns = [description[0] for description in self.current.description]
-        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        data = pickle_data(res, columns)
 
         self.close_DB()
         return data
@@ -94,10 +98,8 @@ class OrdersCustomersORM():
         
         columns = [description[0] for description in self.current.description]
 
-        # table_viewer.data_to_html(rows, columns, orders)
+        data = pickle_data(rows, columns)
 
-        t = (pickle.dumps(rows), pickle.dumps(columns))
-        data = pickle.dumps(t)
         self.close_DB()
         return data
     
@@ -129,7 +131,8 @@ class OrdersCustomersORM():
         self.current.execute(sql_query)
         res = self.current.fetchall()
         columns = [description[0] for description in self.current.description]
-        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        # data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        data = pickle_data(res, columns)
 
         self.close_DB()
         return data
@@ -143,7 +146,21 @@ class OrdersCustomersORM():
         self.current.execute(sql_query)
         res = self.current.fetchall()
         columns = [description[0] for description in self.current.description]
-        data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        # data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        data = pickle_data(res, columns)
+
+        self.close_DB()
+        return data
+    
+    def get_id_by_phone(self, phone_num):
+
+        self.open_DB()
+
+        sql_query = f"SELECT phone_num, id FROM customers WHERE phone_num = '{phone_num}'"
+        self.current.execute(sql_query)
+        res = self.current.fetchall()
+        columns = [description[0] for description in self.current.description]
+        data = pickle_data(res, columns)
 
         self.close_DB()
         return data
@@ -239,6 +256,36 @@ class OrdersCustomersORM():
         return True
     
 
+    def add_to_menu(self, items:str):
+
+        self.open_DB()
+
+        for itemPrice in items.split(','):
+            item_name, price = itemPrice.split(':')
+            sql_query = f"INSERT INTO {menu} (item, price) VALUES ('{item_name}', {price});"
+            self.current.execute(sql_query)
+            self.commit()
+
+        # res = self.current.fetchall()
+        # columns = [description[0] for description in self.current.description]
+        # data = pickle.dumps((pickle.dumps(res), pickle.dumps(columns)))
+        
+        data = self.get_menu()
+
+        self.close_DB()
+        return data
+    
+    def edit_item_price(self, item, new_price):
+
+        self.open_DB()
+
+        sql_query = f"UPDATE menu SET price={new_price} WHERE item = '{item}'"
+        self.current.execute(sql_query)
+        self.commit()
+        data = self.get_menu()
+
+        self.close_DB()
+        return data
 
 
 
@@ -276,15 +323,3 @@ class OrdersCustomersORM():
 
         self.close_DB()
         return True
-
-
-    def update_account(self,account):
-        pass
-
-
-
-    def delete_user(self,username):
-        pass
-
-    def delete_account(self,accountID):
-        pass

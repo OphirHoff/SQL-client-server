@@ -81,10 +81,13 @@ def do_action(data, db):
         data = db.get_menu()
         to_send = protocol.create_server_response("get menu", data)
 
+    elif action == protocol.INSERT_TO_MENU_REQUEST:
+        data = db.add_to_menu(fields[0])
+        to_send = protocol.create_server_response("menu add", data)
+
     elif action == protocol.GET_EXP_ORDERS_REQUEST:
         data = db.get_pricey_orders()
         to_send = protocol.create_server_response("pricey orders", data)
-
 
     else:
         print(f"Got unknown action from client {action}")
